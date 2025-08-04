@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tenant Onboarding & Agreements</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <!-- Signature Pad -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+
+  <style>
+    :root {
+      --primary-color: #ffc107;
+      --secondary-color: #212529;
+      --accent-color: #17a2b8;
+    }
+    
+    body {
+      background-image: url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: white;
+      min-height: 100vh;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: -1;
+    }
+
+    .glass-container {
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 20px;
+      padding: 30px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-weight: bold;
+      text-shadow: 1px 1px 5px #000;
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: var(--primary-color);
+      border-radius: 3px;
+    }
+
+    h4 {
+      color: var(--primary-color);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    label {
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .form-control, .form-select {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 10px 15px;
+    }
+
+    .form-control:focus, .form-select:focus {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .btn-yellow {
+      background-color: var(--primary-color);
+      color: var(--secondary-color);
+      font-weight: 600;
+      padding: 10px 25px;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .btn-yellow:hover {
+      background-color: #e0a800;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-outline-yellow {
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      font-weight: 600;
+      background: transparent;
+      padding: 8px 20px;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline-yellow:hover {
+      background-color: var(--primary-color);
+      color: var(--secondary-color);
+    }
+
+    .form-section {
+      margin-bottom: 40px;
+      padding: 20px;
+      border-radius: 15px;
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .signature-container {
+      border: 1px solid #ccc;
+      background: white;
+      width: 100%;
+      max-width: 100%;
+      height: 150px;
+      cursor: crosshair;
+    }
+
+    .signature-clear {
+      color: #dc3545;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .signature-clear:hover {
+      text-decoration: underline;
+    }
+
+    .tab-content {
+      padding: 20px 0;
+    }
+
+    .nav-tabs .nav-link {
+      color: rgba(255, 255, 255, 0.7);
+      border: none;
+      padding: 10px 20px;
+      font-weight: 500;
+    }
+
+    .nav-tabs .nav-link.active {
+      color: var(--primary-color);
+      background: transparent;
+      border-bottom: 3px solid var(--primary-color);
+    }
+
+    .nav-tabs .nav-link:hover:not(.active) {
+      color: white;
+    }
+
+    .tenant-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      transition: transform 0.3s ease;
+    }
+
+    .tenant-card:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .tenant-status-active {
+      color: #28a745;
+    }
+
+    .tenant-status-inactive {
+      color: #dc3545;
+    }
+
+    .tenant-actions a {
+      color: rgba(255, 255, 255, 0.6);
+      margin-left: 10px;
+      transition: color 0.2s ease;
+    }
+
+    .tenant-actions a:hover {
+      color: var(--primary-color);
+    }
+    #tenantSelect {
+      background-color: rgba(255, 255, 255, 0.2); /* or any color you want */
+      color: rgb(234, 84, 84);
+      border: 1px solid var(--primary-color);
+    }
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    @media (max-width: 768px) {
+      .glass-container {
+        padding: 20px;
+      }
+      
+      .form-section {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  
+  <!-- Toast Notifications -->
+  <div class="toast-container">
+    <div id="successToast" class="toast align-items-center text-white bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          <i class="fas fa-check-circle me-2"></i>
+          <span id="successMessage">Operation completed successfully!</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-5">
+    <div class="glass-container">
+      <h2><i class="fa-solid fa-user-plus me-2"></i>Tenant Onboarding & Digital Agreement</h2>
+
+      <!-- Tabs Navigation -->
+      <ul class="nav nav-tabs" id="tenantTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="add-tab" data-bs-toggle="tab" data-bs-target="#add-tenant" type="button" role="tab">Add Tenant</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="agreement-tab" data-bs-toggle="tab" data-bs-target="#agreement" type="button" role="tab">Generate Agreement</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="manage-tab" data-bs-toggle="tab" data-bs-target="#manage-tenants" type="button" role="tab">Manage Tenants</button>
+        </li>
+      </ul>
+
+      <!-- Tabs Content -->
+      <div class="tab-content" id="tenantTabsContent">
+        <!-- Add Tenant Tab -->
+        <div class="tab-pane fade show active" id="add-tenant" role="tabpanel" aria-labelledby="add-tab">
+          <form id="addTenantForm" class="row g-3">
+            <div class="col-md-6">
+              <label for="tenantName" class="form-label">Full Name*</label>
+              <input type="text" class="form-control" id="tenantName" required>
+            </div>
+            <div class="col-md-6">
+              <label for="tenantPhone" class="form-label">Phone Number*</label>
+              <input type="tel" class="form-control" id="tenantPhone" pattern="[0-9]{10}" required>
+              <small class="text-muted">Format: 1234567890</small>
+            </div>
+            <div class="col-md-6">
+              <label for="tenantEmail" class="form-label">Email Address*</label>
+              <input type="email" class="form-control" id="tenantEmail" required>
+            </div>
+            <div class="col-md-6">
+              <label for="tenantIdProof" class="form-label">ID Proof Number</label>
+              <input type="text" class="form-control" id="tenantIdProof">
+            </div>
+            <div class="col-md-6">
+              <label for="tenantMoveIn" class="form-label">Move-in Date</label>
+              <input type="date" class="form-control" id="tenantMoveIn">
+            </div>
+            <div class="col-md-6">
+              <label for="tenantStatus" class="form-label">Status*</label>
+              <select id="tenantStatus" class="form-select" required>
+                <option value="active" selected>Active</option>
+                <option value="inactive">Inactive</option>
+                <option value="pending">Pending Approval</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label for="tenantNotes" class="form-label">Additional Notes</label>
+              <textarea class="form-control" id="tenantNotes" rows="2"></textarea>
+            </div>
+            <div class="col-12 d-flex justify-content-between">
+              <button type="reset" class="btn btn-outline-yellow">Reset Form</button>
+              <button type="submit" class="btn btn-yellow">
+                <i class="fas fa-user-plus me-2"></i>Add Tenant
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Generate Agreement Tab -->
+        <div class="tab-pane fade" id="agreement" role="tabpanel" aria-labelledby="agreement-tab">
+          <form id="agreementForm" class="row g-3">
+            <div class="col-md-6">
+              <label for="tenantSelect" class="form-label">Select Tenant*</label>
+              <select class="form-select" id="tenantSelect" required>
+                <div class="mt-2 mb-3">
+                  <p class="mb-1">📧 <strong>Email:</strong> <span id="tenantEmailDisplay">—</span></p>
+                  <p class="mb-1">📞 <strong>Phone:</strong> <span id="tenantPhoneDisplay">—</span></p>
+                </div>
+                <option value="" selected disabled>Select a tenant</option>
+                <option value="1">John Doe (john@example.com)</option>
+                <option value="2">Jane Smith (jane@example.com)</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="rent" class="form-label">Rent Amount (₹)*</label>
+              <div class="input-group">
+                <span class="input-group-text">₹</span>
+                <input type="number" class="form-control" id="rent" min="0" step="100" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="deposit" class="form-label">Security Deposit (₹)</label>
+              <div class="input-group">
+                <span class="input-group-text">₹</span>
+                <input type="number" class="form-control" id="deposit" min="0" step="100">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="duration" class="form-label">Agreement Duration*</label>
+              <select class="form-select" id="duration" required>
+                <option value="6">6 Months</option>
+                <option value="12" selected>12 Months</option>
+                <option value="24">24 Months</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label for="address" class="form-label">Rental Property Address*</label>
+              <textarea class="form-control" id="address" rows="2" required></textarea>
+            </div>
+            <div class="col-md-6">
+              <label for="startDate" class="form-label">Agreement Start Date*</label>
+              <input type="date" class="form-control" id="startDate" required>
+            </div>
+            <div class="col-md-6">
+              <label for="endDate" class="form-label">Agreement End Date*</label>
+              <input type="date" class="form-control" id="endDate" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Tenant Signature*</label>
+              <canvas class="signature-container" id="signaturePad"></canvas>
+
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">Draw your signature above</small>
+                <a class="signature-clear" id="clearSignature"><i class="fas fa-eraser me-1"></i>Clear</a>
+              </div>
+              <input type="hidden" id="signatureData" name="signature">
+            </div>
+            <div class="d-flex justify-content-end mt-2">
+              <button type="button" class="btn btn-outline-yellow btn-sm" id="saveSignatureBtn">
+                <i class="fas fa-save me-1"></i>Save Signature
+              </button>
+            </div>
+
+            <div class="col-12">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                <label class="form-check-label" for="termsCheck">
+                  I agree to the terms and conditions of the rental agreement
+                </label>
+              </div>
+            </div>
+            <div class="col-12 d-flex justify-content-between">
+              <button type="button" class="btn btn-outline-yellow" data-bs-toggle="modal" data-bs-target="#previewModal">
+                <i class="fas fa-eye me-2"></i>Preview
+              </button>
+              <button type="submit" class="btn btn-yellow">
+                <i class="fas fa-file-contract me-2"></i>Generate Agreement
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Manage Tenants Tab -->
+        <div class="tab-pane fade" id="manage-tenants" role="tabpanel" aria-labelledby="manage-tab">
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search tenants..." id="tenantSearch">
+                <button class="btn btn-outline-yellow" type="searchButton">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-6 text-end">
+              <button class="btn btn-yellow" data-bs-toggle="modal" data-bs-target="#bulkUploadModal">
+                <i class="fas fa-upload me-2"></i>Bulk Upload
+              </button>
+            </div>
+          </div>
+          <canvas id="signaturePad" width="600" height="200" class="signature-container"></canvas>
+          <div class="row" id="tenantList">
+            <!-- Tenant cards will be dynamically inserted here -->
+            
+          </div>
+            
+          <nav class="mt-4" aria-label="Tenant Pagination">
+            <ul class="pagination justify-content-center" id="paginationControls"></ul>
+          </nav>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Modal -->
+  <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title" id="previewModalLabel">Agreement Preview</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="agreement-preview p-4" style="background: white; color: black; border-radius: 5px;">
+            <h4 class="text-center mb-4">RENTAL AGREEMENT</h4>
+            <p>This Rental Agreement is made on <span id="previewDate" class="fw-bold">_____</span> between:</p>
+            
+            <p class="fw-bold">LANDLORD:</p>
+            <p>[Your Name/Company Name]</p>
+            <p>[Your Address]</p>
+            
+            <p class="fw-bold mt-3">TENANT:</p>
+            <p id="previewTenant">_____</p>
+            <p id="previewTenantAddress">_____</p>
+            
+            <p class="fw-bold mt-3">PROPERTY:</p>
+            <p id="previewProperty">_____</p>
+            
+            <p class="fw-bold mt-3">TERMS:</p>
+            <ol>
+              <li>The monthly rent shall be ₹<span id="previewRent" class="fw-bold">_____</span> payable in advance on the first day of each month.</li>
+              <li>A security deposit of ₹<span id="previewDeposit" class="fw-bold">_____</span> has been paid by the Tenant.</li>
+              <li>The tenancy shall be for a period of <span id="previewDuration" class="fw-bold">_____</span> months, commencing on <span id="previewStart" class="fw-bold">_____</span> and ending on <span id="previewEnd" class="fw-bold">_____</span>.</li>
+              <li>The Tenant agrees to use the premises solely as a private residence.</li>
+            </ol>
+            
+            <div class="row mt-5">
+              <div class="col-md-6">
+                <p class="border-top pt-3">Landlord Signature</p>
+              </div>
+              <div class="col-md-6">
+                <p class="border-top pt-3">Tenant Signature</p>
+                <div id="previewSignature" class="mt-2" style="height: 50px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-yellow" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-yellow" id="printAgreementBtn">
+            <i class="fas fa-print me-2"></i>Print
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Upload Modal -->
+  <div class="modal fade" id="bulkUploadModal" tabindex="-1" aria-labelledby="bulkUploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bulkUploadModalLabel">Bulk Tenant Upload</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Upload a CSV file with tenant information. <a href="#" class="text-yellow">Download template</a></p>
+          <div class="mb-3">
+            <input class="form-control" type="file" id="bulkUploadFile" accept=".csv">
+          </div>
+          <div class="progress mb-3" style="height: 5px;">
+            <div class="progress-bar bg-warning" role="progressbar" style="width: 0%"></div>
+          </div>
+          <div class="alert alert-info">
+            <small>CSV should include: Name, Email, Phone, ID Proof, Move-in Date</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-yellow" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-yellow" id="uploadCSVBtn">Upload</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+<script>
+  
+
+    document.getElementById('manage-tab').addEventListener('click', fetchTenantsFromBackend);
+
+    // Signature pad setup
+    const canvas = document.getElementById("signaturePad");
+    const signaturePad = new SignaturePad(canvas, {
+      backgroundColor: 'rgba(255, 255, 255, 0)',
+      penColor: 'rgb(0, 0, 0)'
+    });
+
+    document.getElementById('clearSignature').addEventListener('click', function (e) {
+      e.preventDefault();
+      signaturePad.clear();
+    });
+
+async function fetchTenantsFromBackend() {
+    try {
+      const res = await fetch('http://localhost:5000/api/tenants/all');
+      tenants = await res.json();
+      renderTenants();
+      renderPagination();
+      loadTenantDropdown();
+    } catch (err) {
+      console.error('❌ Failed to fetch tenants:', err);
+    }
+  }
+
+
+    // Add tenant
+    document.getElementById('addTenantForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const tenantData = {
+        name: document.getElementById('tenantName').value,
+        email: document.getElementById('tenantEmail').value,
+        phone: document.getElementById('tenantPhone').value,
+        idProof: document.getElementById('tenantIdProof').value,
+        moveInDate: document.getElementById('tenantMoveIn').value,
+        status: document.getElementById('tenantStatus').value,
+        notes: document.getElementById('tenantNotes').value
+      };
+
+      try {
+        const res = await fetch('http://localhost:5000/api/tenants/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tenantData)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showSuccess('✅ Tenant added successfully!');
+          this.reset();
+          fetchTenantsFromBackend(); // Refresh tenant list
+        } else {
+          alert('❌ Error: ' + data.error);
+        }
+      } catch (err) {
+        alert('❌ Failed to connect to backend');
+        console.error(err);
+      }
+    });
+
+    // Submit agreement
+    document.getElementById('agreementForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (signaturePad.isEmpty()) {
+        alert('Please sign before submitting');
+        return;
+      }
+
+      const agreementData = {
+        tenantId: document.getElementById('tenantSelect').value,
+        rent: document.getElementById('rent').value,
+        deposit: document.getElementById('deposit').value,
+        duration: document.getElementById('duration').value,
+        address: document.getElementById('address').value,
+        startDate: document.getElementById('startDate').value,
+        endDate: document.getElementById('endDate').value,
+        signature: signaturePad.toDataURL()
+      };
+
+      try {
+        const res = await fetch('http://localhost:5000/api/agreements/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(agreementData)
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          showSuccess('✅ Agreement submitted!');
+          this.reset();
+          signaturePad.clear();
+        } else {
+          alert('❌ Error: ' + data.error);
+        }
+      } catch (err) {
+        alert('❌ Failed to connect to backend');
+        console.error(err);
+      }
+    });
+
+    // Preview update
+    document.getElementById('agreementForm').addEventListener('change', updateAgreementPreview);
+
+    // Date initialization
+    const today = new Date();
+    document.getElementById('startDate').valueAsDate = today;
+    const endDate = new Date();
+    endDate.setFullYear(today.getFullYear() + 1);
+    document.getElementById('endDate').valueAsDate = endDate;
+
+    document.getElementById('duration').addEventListener('change', updateEndDate);
+    document.getElementById('startDate').addEventListener('change', updateEndDate);
+  
+  function updateAgreementPreview() {
+    const form = document.getElementById('agreementForm');
+    const tenantSelect = form.querySelector('#tenantSelect');
+    const today = new Date();
+
+    document.getElementById('previewDate').textContent = today.toLocaleDateString();
+    if (tenantSelect.value) {
+      const tenantText = tenantSelect.options[tenantSelect.selectedIndex].text;
+      document.getElementById('previewTenant').textContent = tenantText.split(' (')[0];
+    }
+
+    document.getElementById('previewProperty').textContent = form.querySelector('#address').value;
+    document.getElementById('previewRent').textContent = form.querySelector('#rent').value;
+    document.getElementById('previewDeposit').textContent = form.querySelector('#deposit').value || '0';
+    document.getElementById('previewDuration').textContent = form.querySelector('#duration').value;
+
+    const startDate = new Date(form.querySelector('#startDate').value);
+    document.getElementById('previewStart').textContent = startDate.toLocaleDateString();
+
+    const endDate = new Date(form.querySelector('#endDate').value);
+    document.getElementById('previewEnd').textContent = endDate.toLocaleDateString();
+  }
+
+  document.getElementById('printAgreementBtn').addEventListener('click', () => {
+  const content = document.querySelector('.agreement-preview').innerHTML;
+  const printWindow = window.open('', '', 'height=700,width=800');
+  printWindow.document.write('<html><head><title>Agreement</title></head><body>');
+  printWindow.document.write(content);
+  printWindow.document.write('</body></html>');
+  printWindow.document.close();
+  printWindow.print();
+});
+
+  function updateEndDate() {
+    const startDate = new Date(document.getElementById('startDate').value);
+    const months = parseInt(document.getElementById('duration').value);
+    if (!isNaN(startDate.getTime())) {
+      const endDate = new Date(startDate);
+      endDate.setMonth(startDate.getMonth() + months);
+      document.getElementById('endDate').valueAsDate = endDate;
+    }
+  }
+
+  function showSuccess(message) {
+    const toastEl = document.getElementById('successToast');
+    document.getElementById('successMessage').textContent = message;
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+  }
+
+  document.getElementById('bulkUploadModal').querySelector('button.btn-yellow').addEventListener('click', async () => {
+  const fileInput = document.getElementById('bulkUploadFile');
+  const file = fileInput.files[0];
+  if (!file) return alert('Please select a CSV file.');
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const csv = e.target.result;
+    const rows = parseCSV(csv);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const tenant of rows) {
+      try {
+        const res = await fetch('http://localhost:5000/api/tenants/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tenant)
+        });
+
+        if (res.ok) {
+          successCount++;
+        } else {
+          failCount++;
+          const errData = await res.json();
+          console.error('❌ Failed to add tenant:', errData.error);
+        }
+      } catch (err) {
+        console.error('❌ Error uploading tenant:', err);
+        failCount++;
+      }
+    }
+
+    alert(`✅ Upload finished:\n✔️ ${successCount} succeeded\n❌ ${failCount} failed`);
+    document.getElementById('bulkUploadModal').querySelector('.btn-close').click();
+    fileInput.value = '';
+  };
+
+  reader.readAsText(file);
+});
+
+
+function parseCSV(csv) {
+  const [headerLine, ...lines] = csv.trim().split('\n');
+  const headers = headerLine.split(',').map(h => h.trim());
+
+  return lines.map(line => {
+    const values = line.split(',').map(v => v.trim());
+    const obj = {};
+    headers.forEach((header, index) => {
+      obj[header] = values[index] || '';
+    });
+    return obj;
+  });
+}
+
+</script>
+<script>
+document.getElementById('uploadCSVBtn').addEventListener('click', function () {
+  const fileInput = document.getElementById('bulkUploadFile');
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert('Please select a CSV file.');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async function (e) {
+    const csv = e.target.result.trim();
+    const lines = csv.split('\n');
+
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const requiredHeaders = ['name', 'email', 'phone', 'id proof', 'move-in date'];
+
+    const isValid = requiredHeaders.every(h => headers.includes(h));
+    if (!isValid) {
+      alert('Invalid CSV headers. Required: Name, Email, Phone, ID Proof, Move-in Date');
+      return;
+    }
+
+    const progressBar = document.querySelector('.progress-bar');
+    let successCount = 0;
+
+    for (let i = 1; i < lines.length; i++) {
+      const row = lines[i].split(',').map(cell => cell.trim());
+
+      const tenant = {
+        name: row[headers.indexOf('name')],
+        email: row[headers.indexOf('email')],
+        phone: row[headers.indexOf('phone')],
+        idProof: row[headers.indexOf('id proof')],
+        moveInDate: row[headers.indexOf('move-in date')],
+        status: 'active',
+        notes: ''
+      };
+
+      try {
+        const res = await fetch('http://localhost:5000/api/tenants/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tenant)
+        });
+
+        if (res.ok) {
+          successCount++;
+          progressBar.style.width = `${(successCount / (lines.length - 1)) * 100}%`;
+        }
+      } catch (err) {
+        console.error('❌ Upload failed for:', tenant.name, err);
+      }
+    }
+
+    alert(`${successCount} tenants uploaded successfully.`);
+    fileInput.value = ''; // clear file input
+    progressBar.style.width = '0%';
+    document.getElementById('bulkUploadModal').querySelector('.btn-close').click();
+
+    // Reload tenant list if on Manage tab
+    if (document.getElementById('manage-tab').classList.contains('active')) {
+      fetchTenantsFromBackend();
+    }
+  };
+
+  reader.readAsText(file);
+});
+</script>
+<script>
+  // ---------------- GLOBALS ----------------
+  let tenants = [];
+  let currentPage = 1;
+  const itemsPerPage = 6;
+  let currentSortField = '';
+  let currentSortOrder = 'asc';
+
+  // ---------------- UTILITY FUNCTIONS ----------------
+  function getStatusClass(status) {
+    switch (status?.toLowerCase()) {
+      case 'active': return 'bg-success';
+      case 'inactive': return 'bg-danger';
+      case 'pending': return 'bg-warning text-dark';
+      default: return 'bg-secondary';
+    }
+  }
+
+  function capitalize(str) {
+  if (!str || typeof str !== 'string') return 'N/A';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+
+  function showSuccess(message) {
+    const toastEl = document.getElementById('successToast');
+    document.getElementById('successMessage').textContent = message;
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+  }
+
+  // ---------------- TENANT FETCH + RENDER ----------------
+  async function fetchTenantsFromBackend() {
+    try {
+      const res = await fetch('http://localhost:5000/api/tenants/all');
+      tenants = await res.json();
+      renderTenants();
+      renderPagination();
+      loadTenantDropdown();
+    } catch (err) {
+      console.error('❌ Failed to fetch tenants:', err);
+    }
+  }
+
+  function renderTenants(filteredList = tenants) {
+    const container = document.getElementById('tenantList');
+    container.innerHTML = '';
+
+    if (currentSortField) {
+      filteredList.sort((a, b) => {
+        let valA = a[currentSortField]?.toLowerCase?.() || a[currentSortField];
+        let valB = b[currentSortField]?.toLowerCase?.() || b[currentSortField];
+        if (valA < valB) return currentSortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return currentSortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pageTenants = filteredList.slice(start, end);
+
+    pageTenants.forEach(t => {
+      const card = document.createElement('div');
+      card.className = 'col-md-6 col-lg-4';
+      card.innerHTML = `
+        <div class="tenant-card">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h5>${t.name}</h5>
+              <p class="mb-1"><i class="fas fa-envelope me-2"></i>${t.email}</p>
+              <p class="mb-1"><i class="fas fa-phone me-2"></i>${t.phone}</p>
+            </div>
+            <span class="badge ${getStatusClass(t.status)}">${capitalize(t.status)}</span>
+          </div>
+          <div class="tenant-actions mt-3 text-end">
+            <a href="#"><i class="fas fa-edit"></i></a>
+            <a href="#"><i class="fas fa-file-alt"></i></a>
+            <a href="#"><i class="fas fa-bell"></i></a>
+            <a href="#" class="text-danger"><i class="fas fa-trash-alt"></i></a>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function renderPagination(filteredList = tenants) {
+    const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+    const pagination = document.getElementById('paginationControls');
+    pagination.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    const prev = document.createElement('li');
+    prev.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+    prev.innerHTML = `<a class="page-link" href="#">Previous</a>`;
+    prev.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (currentPage > 1) {
+        currentPage--;
+        renderTenants(filteredList);
+        renderPagination(filteredList);
+      }
+    });
+    pagination.appendChild(prev);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const li = document.createElement('li');
+      li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+      li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+      li.addEventListener('click', (e) => {
+        e.preventDefault();
+        currentPage = i;
+        renderTenants(filteredList);
+        renderPagination(filteredList);
+      });
+      pagination.appendChild(li);
+    }
+
+    const next = document.createElement('li');
+    next.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+    next.innerHTML = `<a class="page-link" href="#">Next</a>`;
+    next.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderTenants(filteredList);
+        renderPagination(filteredList);
+      }
+    });
+    pagination.appendChild(next);
+  }
+
+  function loadTenantDropdown() {
+    const select = document.getElementById('tenantSelect');
+    if (!select) return;
+    select.innerHTML = '<option value="" selected disabled>Select a tenant</option>';
+    tenants.forEach(tenant => {
+      const option = document.createElement('option');
+      option.value = tenant._id;
+      option.textContent = `${tenant.name} (${tenant.email})`;
+      select.appendChild(option);
+      option.setAttribute('data-email', tenant.email);
+      option.setAttribute('data-phone', tenant.phone);
+    });
+  }
+
+  document.getElementById('tenantSelect').addEventListener('change', function () {
+  const selected = this.options[this.selectedIndex];
+  const email = selected.getAttribute('data-email');
+  const phone = selected.getAttribute('data-phone');
+  document.getElementById('tenantEmailDisplay').textContent = email || '—';
+  document.getElementById('tenantPhoneDisplay').textContent = phone || '—';
+});
+
+  function downloadCSV() {
+    const headers = ["Name", "Email", "Phone", "ID Proof", "Move-in Date", "Status", "Notes"];
+    const rows = tenants.map(t => [
+      t.name, t.email, t.phone, t.idProof, t.moveInDate, t.status, t.notes
+    ]);
+
+    let csvContent = headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", "tenants.csv");
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // ---------------- EVENT BINDINGS ----------------
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchTenantsFromBackend();
+    
+
+    document.getElementById('tenantSearch').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      const filtered = tenants.filter(t =>
+        t.name.toLowerCase().includes(query) ||
+        t.email.toLowerCase().includes(query) ||
+        t.phone.includes(query)
+      );
+      currentPage = 1;
+      renderTenants(filtered);
+      renderPagination(filtered);
+    });
+    function resizeSignaturePad() {
+      const canvas = document.getElementById("signaturePad");
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+      canvas.width = canvas.offsetWidth * ratio;
+      canvas.height = canvas.offsetHeight * ratio;
+      canvas.getContext("2d").scale(ratio, ratio);
+      signaturePad.clear();
+    }
+    document.getElementById('agreement-tab').addEventListener('click', () => {
+  setTimeout(() => {
+    const canvas = document.getElementById("signaturePad");
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    signaturePad.clear(); // clear and resize
+  }, 200); // small delay to let tab become visible
+});
+    document.getElementById('manage-tab').addEventListener('click', fetchTenantsFromBackend);
+    document.getElementById('downloadCSVBtn')?.addEventListener('click', downloadCSV);
+
+    document.getElementById('sortByName')?.addEventListener('click', () => {
+      currentSortField = 'name';
+      currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+      renderTenants();
+      renderPagination();
+    });
+
+    document.getElementById('sortByEmail')?.addEventListener('click', () => {
+      currentSortField = 'email';
+      currentSortOrder = currentSortOrder === 'asc' ? 'desc' : 'asc';
+      renderTenants();
+      renderPagination();
+    });
+  });
+
+  document.getElementById('saveSignatureBtn').addEventListener('click', () => {
+  if (signaturePad.isEmpty()) {
+    alert("Please draw a signature first.");
+    return;
+  }
+  const link = document.createElement('a');
+  link.href = signaturePad.toDataURL();
+  link.download = 'tenant-signature.png';
+  link.click();
+});
+
+</script>
+
+</body>
+</html>
